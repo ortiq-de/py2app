@@ -45,6 +45,16 @@ the build:
 
   Show program version.
 
+
+The following arguments are experimental and should only by used
+when debugging problems with a build. These options can be removed
+or changes in any update.
+
+* ``--x-debug-macho-usage``
+
+  Generated app bundles will log Mach-O images used by the bundle that
+  are neither inside the bundle nor system libraries or frameworks.
+
 See :doc:`pyproject` for information on the structure of the pyproject
 configuration file.
 

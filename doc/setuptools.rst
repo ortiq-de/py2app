@@ -291,6 +291,8 @@ Options for 'py2app' command:
      - Create output that depends on an existing installation of Python, but
        does contain all code and dependencies.
 
+       **This option is no longer supported and will always result in an error when used**
+
    * - ``--alias``
      - alias
      - None (use ``True`` in setup.py)

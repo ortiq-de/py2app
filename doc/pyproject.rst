@@ -21,8 +21,6 @@ A basic example of a configuration file:
    [tools.py2app.bundle.main]
 
    script = "main.py"
-   semi-standalone = true
-
 
 The configuration for bundles supports defining multiple bundles,
 but for now only a single bundle is supported. The convention is
@@ -41,9 +39,6 @@ Key                          Value Type (TOML) Description
 
                                                * ``standalone`` (default): Create a bundle that can be used
                                                  on a different machine.
-
-                                               * ``semi-standalone``: Create a bundle that embeds all resources
-                                                 except the python interpreter
 
                                                * ``alias``: Debug builds that links to source files instead
                                                  of copying them into the bundle.
@@ -64,16 +59,27 @@ Key                          Value Type (TOML) Description
 ``python.optimize``          int               Optimization level for the Python interpreter. Defaults
                                                to the level for the current interpreter.
 
+``python.dev-mode``          bool              Enable Python's dev-mode, e.g.``-Xdev``
+                                               (default ``false``)
+
+``python.malloc-debug``      bool              Enable malloc debugging for the bundle
+                                               (default ``false``)
+
 ``python.verbose``           bool              Start the Python interpreter in verbose mode
                                                (default ``false``)
 
 ``python.use_pythonpath``    bool              Use the ``PYTHONPATH`` environment variable when
                                                it is set (default ``false``)
 
-
-``python.use_sitepackages``  bool              Use the site-packages directory for a semi-standalone
-
 ``python.faulthandler``      bool              Enable ``faulthandler`` (default ``false``).
+
+``python.finalize``          bool              Call ``Py_Finalize()`` when the application script exists.
+                                               (default ``true``)
+
+                                               This option can be set to ``false`` when callbacks into
+                                               Python can happen after the script exits. The primary use
+                                               case for this are scripts using PyObjC that register values
+                                               with Cocoa for later use.
 ============================ ================= ===========================================================
 
 Bundle configuration

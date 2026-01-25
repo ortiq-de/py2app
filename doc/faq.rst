@@ -1,6 +1,24 @@
 Frequently Asked Questions
 ==========================
 
+* Using the SSL module
+
+  The SSL module uses Certificate Authority trust files
+  for validating certificates.
+
+  Py2app will warn when those files are provided
+  statically (for example using the
+  _`certifi <https://pypi.org/project/certifi>` package)
+  because those static files have to be updated periodicly.
+
+  It is better to install the
+  _`truststore <https://pypi.org/project/truststore>`
+  package which will use the system trust store.
+
+  Py2app will automatically use *truststore* when it
+  is available (no need to inject it in the application
+  code).
+
 * "Mach-O header may be too large to relocate"
 
   Py2app will fail with a relocation error when

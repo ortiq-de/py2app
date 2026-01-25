@@ -71,6 +71,11 @@ The paths below are relative to the root of the bundle:
   and uses the Python environment of the bundle. This executable cannot
   be copied outside the bundle, and does not support virtual environments.
 
+  The ``python3`` executable supports the same command-line interface as
+  a regular ``python3`` executable, but will not look at environment variables
+  during startup (as if the ``-E`` option is always specified) and will
+  not use user site packages.
+
 * ``Contents/Resources/python-libraries.zip``
 
   Python libraries marked as zip safe.
@@ -89,12 +94,7 @@ The paths below are relative to the root of the bundle:
   The filenames in this folder are the full name of the extension
   module followed by ``.so``.
 
-* ``Contents/Resources/bin`` (optional)
-
-  This folder is used to store launcher binaries for additional scripts
-  included in the bundle.
-
-* ``Contents/Frameworks/lib`` (optional)
+* ``Contents/Frameworks`` (optional)
 
   This folder is used to store shared libraries used by
   extension modules.
@@ -106,6 +106,14 @@ Py2app Introspection
 During launch py2app will inject the following values into
 the interpreter:
 
+* ``sys.py2app_argv0`` -  the executable path resolved with realpath(3)
+
+  This is primarily meant to be used by the helper code injected by py2app to
+  ensure application launching works when using a symbolic link to the stub
+  executables in a generated bundle.
+
+  Only set for app bundles (or helper scripts in plugin bundles), not for plugin bundles.
+
 * ``sys.py2app_bundle_resources`` - absolute path of the ``Contents/Resources`` folder
 
 * ``sys.py2app_bundle_address`` - integer with the address of the NSBundle
@@ -114,17 +122,5 @@ the interpreter:
   integer.
 
   Only set for plugin bundles, not for app bundles.
-
-* ``os.environ["PYOBJC_BUNDLE_ADDRESS"]`` - NSBundle address in plugin bundles
-
-  **Deprecated:** the address of the ``NSBundle`` that represents this plugin bundle
-  as a hexadecimal string.
-
-  Only set for plugin bundles, not for app bundles.
-
-* ..
-
-  To be determined. Also depends on the needs of pyobjc, in
-  particular for plugin bundles.
 
 .. _`Bundle Programming Guide`: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/Introduction/Introduction.html#//apple_ref/doc/uid/10000123i

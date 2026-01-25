@@ -4,33 +4,65 @@ Release history
 py2app 2.0a0
 ------------
 
-This will be a major update to py2app, although I'm currently
-primarily focused on cleaning up the code base. At this phase
-in development I'm primarily working with Python 3.10 and 3.11,
-the code might not work on older versions due to using newish APIs.
+Py2app 2.0 is a complete rewrite of the code base, with an attempt
+to be backward compatible with previous versions by way of an emulation
+layer. There may be differences in semenatics even with the emulation
+layer due to the unclear semantics and code base of previous versions.
+
+The new version of py2app uses "pyproject.toml" as its configuration
+file and is invoked using "python -m py2app".
+
+For backward compatibility the older "python setup.py py2app" interface
+is also supported for the foreseeable future, but this interface will
+not receive new features.
+
+Known incompatibilities between py2app 2.0 and earlier versions:
+
+* Py2app requires Python 3.8 or later, and will from this point drop
+  support for Python versions when they are no longer supported by
+  the CPython team.
+
+* Py2app now only actively supports macOS 10.9 or later for the x86_64
+  and arm64 architectures (including 'Universal 2' fat binaries), as
+  by the CPython installers for macOS.
+
+* The "semi standalone" build mode is no longer supported.
+
+  This build mode created app and plugin bundles that are require
+  a system install of Python but are otherwise self contained.
+
+  The way the Python shared library was located and loaded is
+  not compatible with the new code base, and is also not compatible
+  with code signing (Notarization).
+
+* PyObjC 11 or later is needed when creating plugin bundles using PyObjC.
+
+* The preferred way to invoke py2app is ``python3 -m py2app``, not
+  ``python setup.py py2app``.
+
+  The older interface is still supported and invokes the new
+  implementation.
+
+*  A number of options were removed from the setuptools interface:
+
+  - ``force_system_tk``: The system version of Tk is no longer supported by CPython.
+
+  - ``prefer_ppc``: PowerPC is no longer actively supported.
+
+  - ``prescripts`` is no longer an (undocumented) alias for ``extra_scripts``.
+
+  - Unsupported keys in target definitions are now errors.
+
+* Parsing of arguments in the setuptools commands was rewritten and can be
+  more strict, although valid configuration should be accepted just as before.
 
 * The ``install_requires`` option in setup.py is now
   ignored by py2app. Ensure that requirements are installed
   before invoking py2app.
 
-* Py2app now only supports Python 3.8 or later.
-
 * There is no "dryrun" option anymore, the new interface does not
   have the option at all and the setuptools command ignores
   the option.
-
-* Drop the "prefer_ppc" option, use the "arch" option instead
-
-  But see below: py2app no longer ships with stub executables
-  that target PPC systems.
-
-* Drop the "force_syste_tk" option
-
-  The system version of Tcl/Tk is deprecated, and is buggy enough
-  that it is never a good option to use for Python applications.
-
-* Use the ``install_requires`` keyword in the ``setup()`` call
-  is deprecated and will be removed in a future version.
 
 * Previous versions would try to ``eval()``
   the ``app`` and ``plugin`` keyword arguments, with unspecified
@@ -43,6 +75,25 @@ the code might not work on older versions due to using newish APIs.
      )
 
   This undocumented behaviour was removed.
+
+* The "py2applet" script has been removed.
+
+* The (undocumented) usage of setuptools entry points for resource
+  converters has been removed.
+
+
+Various other changes:
+
+* Output of the build command is a lot cleaner than before
+
+* The build commands performs an audit of Mach-O files in bundles to:
+
+  - Warn about references to libraries outside of the bundle
+
+  - Warn about issing libraries loaded using '@..' commands
+
+  - Report the macOS versions and system architecture(s)
+    supported by the bundle.
 
 * #423: The code is now formatted with black.
 
@@ -64,14 +115,7 @@ the code might not work on older versions due to using newish APIs.
 
 * flake8 status is enforced in the  pre-commit configuration
 
-* #426: Remove code that supports Python 3.5 or earlier
-
 * Add 'isort' to pre-commit configuration
-
-* #433: Py2app now only ships with stub executables for
-  arm64, x86_64 and "Universal 2" (fat binaries with x86_64 and arm64)
-
-  Stub executables for PowerPC and 32-bit Intel were removed.
 
 * Code cleanup: Drop all code related to multiple apps or plugins
   from py2app, the code was inactive because the configuration parsing
@@ -84,10 +128,6 @@ the code might not work on older versions due to using newish APIs.
   of the main script now actually works.
 
 * Fix ``PythonShortVersion`` key in ``Info.plist`` for Python 3.10 or later
-
-* Changed the (undocumented) entrypoint for resource converters, the
-  name of the entrypoint should now be the file suffix (without leading
-  dot).
 
 * Switch from plain prints and distutils.log to using rich for printing
   progress information.
@@ -109,30 +149,6 @@ the code might not work on older versions due to using newish APIs.
 
   The annotations are fairly rough at this point, will be cleaned up
   during refactoring the code base.
-
-* Parsing of arguments in the setuptools commands was rewritten and can be
-  more strict, although valid configuration should be accepted just as before.
-
-  Known incompatibilities:
-
-  - pyapp 0.28 accepted "prescripts" as an alias for "extra_scripts" in a
-    target definition (e.g. "``setup(app=[{"script": "main.py", "prescripts": [ ...])``").
-
-    This is no longer supported and will result in an error.
-
-  - Unsupported extra keys in a target definition are now an error.
-
-  As a side effect of this it is now possible to specify a target without
-  an enclosing list, e.g.:
-
-  .. sourcecode:: python
-
-     setup(
-        app="script.py",
-        ...
-     )
-
-* The "py2applet" script has been removed.
 
 * Add reporting on the supported macOS versions and CPU architectures
   for a build artefact.
