@@ -31,4 +31,4 @@ keys in the dictionary are recognized, most are optional:
 # This makes the py2app command work in the distutils.core.setup() case
 import setuptools  # noqa: F401
 
-__version__ = "0.28.9"
+__version__ = "0.28.10"
