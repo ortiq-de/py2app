@@ -504,13 +504,15 @@ byte_compile(files, optimize=%r, force=%r,
             cmd.insert(3, "-OO")
 
         if not dry_run:
-            spawn(cmd, verbose=verbose)
-            execute(
-                os.remove,
-                (script_name,),
-                "removing %s" % script_name,
-                verbose=verbose,
-        )
+            try:
+                spawn(cmd, verbose=verbose)
+            finally:
+                execute(
+                    os.remove,
+                    (script_name,),
+                    "removing %s" % script_name,
+                    verbose=verbose,
+                )
 
     else:
         from distutils.dir_util import mkpath
