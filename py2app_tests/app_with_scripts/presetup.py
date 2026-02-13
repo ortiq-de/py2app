@@ -1,9 +1,10 @@
 from distutils.core import setup, Extension, Command
 from distutils import sysconfig
 from distutils.command.build_ext import build_ext
-from distutils.version import LooseVersion
 import os, shutil, re, subprocess, platform, time
 
+def version_tuple(value):
+    return tuple(int(x) for x in value.split("."))
 
 class my_build_ext (build_ext):
     def run(self):
@@ -24,7 +25,7 @@ class build_dylib (Command):
     def get_arch_flags(self):
         cflags = sysconfig.get_config_var('CFLAGS')
         result = []
-        for item in re.findall('(-arch\s+\S+)', cflags):
+        for item in re.findall(r'(-arch\s+\S+)', cflags):
             result.extend(item.split())
         return result
 
@@ -36,7 +37,7 @@ class build_dylib (Command):
 
         os.makedirs(bdir)
         cflags = self.get_arch_flags()
-        if LooseVersion(platform.mac_ver()[0]) < LooseVersion('10.7'):
+        if version_tuple(platform.mac_ver()[0]) < version_tuple('10.7'):
             cc = [sysconfig.get_config_var('CC')]
             env = dict(os.environ)
             env['MACOSX_DEPLOYMENT_TARGET'] = sysconfig.get_config_var('MACOSX_DEPLOYMENT_TARGET')

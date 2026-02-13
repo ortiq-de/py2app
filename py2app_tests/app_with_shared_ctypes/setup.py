@@ -2,7 +2,6 @@ from setuptools import setup, Command, Extension
 from distutils.command import build_ext as mod_build_ext
 
 from distutils.sysconfig import get_config_var
-from distutils.version import LooseVersion
 import subprocess
 import os
 import shutil
@@ -10,6 +9,9 @@ import platform
 import shlex
 import re
 import sys
+
+def version_tuple(value):
+    return tuple(int(x) for x in value.split("."))
 
 class sharedlib (Command):
     description = "build a shared library"
@@ -19,7 +21,7 @@ class sharedlib (Command):
     def finalize_options(self): pass
 
     def run(self):
-        if LooseVersion(platform.mac_ver()[0]) < LooseVersion('10.7'):
+        if version_tuple(platform.mac_ver()[0]) < version_tuple('10.7'):
             cc = [get_config_var('CC')]
             env = dict(os.environ)
             env['MACOSX_DEPLOYMENT_TARGET'] = get_config_var('MACOSX_DEPLOYMENT_TARGET')
@@ -32,8 +34,8 @@ class sharedlib (Command):
         if not os.path.exists('lib'):
             os.mkdir('lib')
         cflags = get_config_var('CFLAGS')
-        arch_flags = sum([shlex.split(x) for x in re.findall('-arch\s+\S+', cflags)], [])
-        root_flags = sum([shlex.split(x) for x in re.findall('-isysroot\s+\S+', cflags)], [])
+        arch_flags = sum([shlex.split(x) for x in re.findall(r'-arch\s+\S+', cflags)], [])
+        root_flags = sum([shlex.split(x) for x in re.findall(r'-isysroot\s+\S+', cflags)], [])
 
         cmd = cc + arch_flags + root_flags + ['-dynamiclib', '-o', os.path.abspath('lib/libshared.1.dylib'), 'src/sharedlib.c']
         subprocess.check_call(cmd, env=env)

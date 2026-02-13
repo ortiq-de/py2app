@@ -54,7 +54,7 @@ class TestBasicAppWithPlugins (unittest.TestCase):
         kill_child_processes()
 
         env=os.environ.copy()
-        env['TMPDIR'] = os.getcwd()
+        #env['TMPDIR'] = os.getcwd()
         pp = os.path.dirname(os.path.dirname(py2app.__file__))
         if 'PYTHONPATH' in env:
             env['PYTHONPATH'] = pp + ':' + env['PYTHONPATH']

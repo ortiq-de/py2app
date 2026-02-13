@@ -1,6 +1,5 @@
 from setuptools import setup, Command
 from distutils.sysconfig import get_config_var
-from distutils.version import LooseVersion
 import subprocess
 import os
 import glob
@@ -12,6 +11,9 @@ import sys
 
 PLUGIN_NAMES = ['dummy1.qlgenerator', 'dummy2.mdimporter']
 
+def version_tuple(value):
+    return tuple(int(x) for x in value.split("."))
+
 class pluginexe (Command):
     description = "Generate dummy plugin executables"
     user_options = []
@@ -20,7 +22,7 @@ class pluginexe (Command):
     def finalize_options(self): pass
 
     def run(self):
-        if LooseVersion(platform.mac_ver()[0]) < LooseVersion('10.7'):
+        if version_tuple(platform.mac_ver()[0]) < version_tuple('10.7'):
             cc = [get_config_var('CC')]
             env = dict(os.environ)
             env['MACOSX_DEPLOYMENT_TARGET'] = get_config_var('MACOSX_DEPLOYMENT_TARGET')
@@ -33,8 +35,8 @@ class pluginexe (Command):
         if not os.path.exists('lib'):
             os.mkdir('lib')
         cflags = get_config_var('CFLAGS')
-        arch_flags = sum([shlex.split(x) for x in re.findall('-arch\s+\S+', cflags)], [])
-        root_flags = sum([shlex.split(x) for x in re.findall('-isysroot\s+\S+', cflags)], [])
+        arch_flags = sum([shlex.split(x) for x in re.findall(r'-arch\s+\S+', cflags)], [])
+        root_flags = sum([shlex.split(x) for x in re.findall(r'-isysroot\s+\S+', cflags)], [])
 
 
         for plugin_name in PLUGIN_NAMES:

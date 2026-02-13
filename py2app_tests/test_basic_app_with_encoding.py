@@ -74,7 +74,7 @@ class TestBasicAppWithEncoding (unittest.TestCase):
 
         env=os.environ.copy()
         pp = os.path.dirname(os.path.dirname(py2app.__file__))
-        env['TMPDIR'] = os.getcwd()
+        #env['TMPDIR'] = os.getcwd()
         if 'PYTHONPATH' in env:
             env['PYTHONPATH'] = pp + ':' + env['PYTHONPATH']
         else:
