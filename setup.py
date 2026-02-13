@@ -181,7 +181,6 @@ class test(Command):
         self.__old_path = sys.path[:]
         self.__old_modules = sys.modules.copy()
 
-        ei_cmd = self.get_finalized_command("egg_info")
         sys.path.insert(0, os.path.dirname(__file__))
 
         # Strip the namespace packages defined in this distribution
@@ -192,7 +191,6 @@ class test(Command):
         if nspkgs is not None:
             for nm in nspkgs:
                 del sys.modules[nm]
-
 
     def remove_from_sys_path(self):
         sys.path[:] = self.__old_path
