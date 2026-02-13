@@ -10,6 +10,11 @@ py2app 0.29.10
 
 * Fix test failures with setuptools 80.
 
+* This release requires python 3.10 or later
+
+  The code should still work with older versions, but I no longer
+  test with those versions.
+
 
 py2app 0.28.9
 -------------
