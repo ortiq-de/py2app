@@ -55,7 +55,6 @@ def check(cmd, mf):
 
         result = {"packages": ["PyQt6"]}
         result.update(extra)
-        print("XXX: PyQt", result)
         return result
 
     return None
