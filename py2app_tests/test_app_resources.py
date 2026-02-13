@@ -49,7 +49,7 @@ class TestBasicApp (unittest.TestCase):
             env=env)
         lines = p.communicate()[0]
         if p.wait() != 0:
-            print (lines)
+            print (lines.decode())
             raise AssertionError("Creating basic_app bundle failed")
 
     @classmethod

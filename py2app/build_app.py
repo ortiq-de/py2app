@@ -1576,7 +1576,7 @@ class py2app(Command):
         # copy package metadata
         for pkg_info_path in included_metadata:
             base = os.path.join(self.collect_dir, os.path.basename(pkg_info_path))
-            os.mkdir(base)
+            os.makedirs(base, exist_ok=True)
 
             for fn in os.listdir(pkg_info_path):
                 if fn in IGNORED_DISTINFO:
@@ -2534,7 +2534,8 @@ class py2app(Command):
         # Also, we don't append '.zip' to the filename.
         from distutils.dir_util import mkpath
 
-        mkpath(os.path.dirname(zip_filename), dry_run=dry_run)
+        if not dry_run:
+            mkpath(os.path.dirname(zip_filename))
 
         if self.compressed:
             compression = zipfile.ZIP_DEFLATED

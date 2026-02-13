@@ -17,7 +17,7 @@ import macholib.util
 
 try:
     from importlib.metadata import entry_points
-    from importlib.resources import _files
+    from importlib.resources import files as _files
     import pathlib
 
     def resource_filename(pkg, path):
@@ -204,6 +204,8 @@ def copy_file(
             return
         except IOError as exc:
             if exc.errno != errno.EAGAIN:
+                log.info(
+                    "copying file %s failed: %s", source, repr(exc))
                 raise
 
             log.info(
@@ -212,6 +214,11 @@ def copy_file(
                 source,
             )
             time.sleep(2)
+
+        except Exception as exc:
+            log.info(
+                "copying file %s failed: %s", source, repr(exc))
+            raise
 
 
 def _copy_file(
@@ -495,13 +502,14 @@ byte_compile(files, optimize=%r, force=%r,
             cmd.insert(3, "-O")
         elif optimize == 2:
             cmd.insert(3, "-OO")
-        spawn(cmd, verbose=verbose, dry_run=dry_run)
-        execute(
-            os.remove,
-            (script_name,),
-            "removing %s" % script_name,
-            verbose=verbose,
-            dry_run=dry_run,
+
+        if not dry_run:
+            spawn(cmd, verbose=verbose)
+            execute(
+                os.remove,
+                (script_name,),
+                "removing %s" % script_name,
+                verbose=verbose,
         )
 
     else:

@@ -1,6 +1,15 @@
 Release history
 ===============
 
+py2app 0.29.10
+--------------
+
+* #564: Fix broken support for setuptools 82:
+  - pkg_resources was removed, preparation in 0.28.9 was incomplete
+  - a number of utility functions in setuptools lost there 'dry_run' argument..
+
+* Fix test failures with setuptools 80.
+
 
 py2app 0.28.9
 -------------
