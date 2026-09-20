@@ -84,7 +84,19 @@ def copy_library(src: pathlib.Path, dst: pathlib.Path) -> None:
     """
     Copy a shared library from *src* to *dst*
     """
-    shutil.copy2(src, dst, follow_symlinks=False)
+    # dst.parent may not exist yet (e.g. Contents/Frameworks on a fresh
+    # build) - shutil.copy2 does not create it.
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    # follow_symlinks=True (not False): Homebrew dylibs are frequently
+    # symlinks to a versioned real file (e.g. libzstd.1.dylib ->
+    # libzstd.1.5.6.dylib) via a RELATIVE target. Preserving that as a
+    # symlink here just relocates the link, not its target, into a
+    # bundle that doesn't contain what it points to - a dangling link
+    # that breaks the very next operation on it (os.chmod fails
+    # resolving it) and defeats the point of a standalone, relocatable
+    # bundle regardless. Copying the real file content is what
+    # "standalone" is supposed to mean.
+    shutil.copy2(src, dst, follow_symlinks=True)
     os.chmod(dst, 0o755)
 
 

@@ -601,6 +601,7 @@ def add_resources(
         return
 
     for rsrc in progress.iter_task(all_resources, "Copy resources", lambda n: str(n)):
+        (paths.resources / rsrc.destination).mkdir(parents=True, exist_ok=True)
         for src in rsrc.sources:
             if not src.exists():
                 progress.error(f"Resource {str(src)!r} does not exist")
